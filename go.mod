@@ -3,6 +3,7 @@ module github.com/xmlking/micro-starter-kit
 go 1.13
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.4.0 // indirect
 	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/golang/protobuf v1.3.2
 	github.com/google/uuid v1.1.1
@@ -20,5 +21,5 @@ require (
 	github.com/stretchr/testify v1.4.0
 	github.com/thoas/go-funk v0.5.0
 	github.com/tudurom/micro-logrus v0.0.0-20171007082012-3704f28fa9d1
-	google.golang.org/genproto v0.0.0-20191108220845-16a3f7862a1a
+	google.golang.org/genproto v0.0.0-20200127141224-2548664c049f
 )
