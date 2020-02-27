@@ -3,17 +3,20 @@ name: accountsrv
 version: v0.1.0
 log:
   level: debug
-  format: text
+  runtime: local
 database:
   dialect: sqlite3
   host: 0.0.0.0
   port: 9999
   Username: sumo
   Password: demo
-  database: 'file:foobar?mode=memory&cache=shared'
+  # FIXME: https://github.com/jinzhu/gorm/issues/2875
+  # database: "file:foobar?mode=memory&cache=shared"
+  database: "file:./build/gorm.db"
   maxOpenConns: 1
   maxIdleConns: 1
-  connMaxLifetime: 1hr
+  # connMaxLifetime: 1hr
+  connMaxLifetime: 60000000
   logging: true
 email:
   username: yourGmailUsername
@@ -50,7 +53,7 @@ features:
     certfile: certs/micro.crt
     keyfile: certs/micro.key
     cafile: certs/ca.crt
-    servername: '*'
+    servername: "*"
     enabled: false
   validator:
     enabled: true

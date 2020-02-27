@@ -41,8 +41,9 @@ BUILD_FLAGS = $(shell govvv -flags -version $(VERSION) -pkg $(VERSION_PACKAGE))
 # $(warning VERSION_PACKAGE = $(VERSION_PACKAGE), BUILD_FLAGS = $(BUILD_FLAGS))
 
 .PHONY: all tools, check_dirty, clean, update_deps
-.PHONY: proto proto-%
-.PHONY: lint lint-%
+.PHONY: proto proto-% proto_lint proto_format
+.PHONY: lint lint-%, gomod_lint
+.PHONY: format format-%
 .PHONY: pkger pkger-%
 .PHONY: build build-%
 .PHONY: run run-%
@@ -58,7 +59,8 @@ tools:
 	# go install github.com/ahmetb/govvv
 	# go install github.com/markbates/pkger/cmd/pkger
 	# GO111MODULE=off go get github.com/golangci/golangci-lint/cmd/golangci-lint
-	# GO111MODULE=on go get github.com/uber/prototool/cmd/prototool@dev
+	# GO111MODULE=on go get github.com/bufbuild/buf/cmd/buf
+	# GO111MODULE=on go get github.com/rvflash/goup
 
 check_dirty:
 ifdef GIT_DIRTY
@@ -79,6 +81,8 @@ update_deps:
 	go mod verify
 	go mod tidy
 
+# FIXME: protoc-gen-gorm is dumb. it creates github.com dir
+
 proto proto-%:
 	@if [ -z $(TARGET) ]; then \
 		for d in $(TYPES); do \
@@ -86,9 +90,9 @@ proto proto-%:
 				protoc --proto_path=.:${GOPATH}/src \
 				--go_out=paths=source_relative:. \
 				--micro_out=paths=source_relative:. \
-				--gorm_out=paths=source_relative:. \
+				--gorm_out=engine=postgres,enums=string,paths=source_relative:. \
 				--validate_out=lang=go,paths=source_relative:. $$f; \
-				echo compiled: $$f; \
+				echo ✓ compiled: $$f; \
 			done \
 		done \
 	else \
@@ -96,21 +100,47 @@ proto proto-%:
 			protoc --proto_path=.:${GOPATH}/src \
 			--go_out=paths=source_relative:. \
 			--micro_out=paths=source_relative:. \
-			--gorm_out=paths=source_relative:. \
+			--gorm_out=engine=postgres,enums=string,paths=source_relative:. \
 			--validate_out=lang=go,paths=source_relative:. $$f; \
-			echo compiled: $$f; \
+			echo ✓ compiled: $$f; \
 		done \
 	fi
+	@rsync -a github.com/xmlking/micro-starter-kit/srv/account/proto/ srv/account/proto && rm -Rf github.com
+
+proto_lint:
+	@echo "Linting all protos"; \
+	@${GOPATH}/bin/buf check lint
+	@${GOPATH}/bin/buf check breaking --against-input '.git#branch=master'
+
+# I prefer VS Code's proto plugin to format my code then prototool
+proto_format: proto_lint
+	@echo "Formating all protos"; \
+	@${GOPATH}/bin/prototool format -d .;
+
+gomod_lint:
+	@goup -v -m ./...
 
 lint lint-%:
 	@if [ -z $(TARGET) ]; then \
-		echo "Linting all"; \
+		echo "Linting all go"; \
 		${GOPATH}/bin/golangci-lint run ./... --deadline=5m; \
-		echo ${GOPATH}/bin/prototool lint; \
 	else \
-		echo "Linting ${TARGET}-${TYPE}..."; \
+		echo "Linting go in ${TARGET}-${TYPE}..."; \
 		${GOPATH}/bin/golangci-lint run ./${TYPE}/${TARGET}/... ; \
-		echo ${GOPATH}/bin/prototool lint ./${TYPE}/${TARGET}/ ; \
+		echo "Linting protos in ${TARGET}-${TYPE}..."; \
+	fi
+
+# @clang-format -i $(shell find . -type f -name '*.proto')
+
+format format-%:
+	@if [ -z $(TARGET) ]; then \
+		echo "Formating all go"; \
+		gofmt -l -w . ; \
+		echo "Formating all protos"; \
+	else \
+		echo "Formating go in ${TARGET}/${TYPE}..."; \
+		gofmt -l -w ./${TYPE}/${TARGET}/ ; \
+		echo "Formating protos in ${TARGET}/${TYPE}..."; \
 	fi
 
 pkger pkger-%:

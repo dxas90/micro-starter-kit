@@ -180,11 +180,12 @@ Accept: {{jsonType}}
     "service": "accountsrv",
     "method": "ProfileService.Create",
     "request": {
-        "userId": "{{firstUserId}}",
+        "user_id":  "{{firstUserId}}",
         "tz" : "PST",
         "avatar": "sumo1.jpg",
-        "gender": "F",
-        "birthday": "2017-01-15T01:30:15.01Z"
+        "gender": 2,
+        "birthday": "2017-01-15T01:30:15.01Z",
+        "preferred_theme": "cosmic"
     }
 }
 
@@ -214,15 +215,15 @@ Accept: {{jsonType}}
         "limit": 10,
         "page": 1,
         "sort" : "gender",
-        "userId": "{{firstUserId}}",
-        "gender": "F"
+        "preferred_theme": "cosmic",
+        "gender": 2
     }
 }
 
 @firstProfileId = {{ListProfile.response.body.results[0].id}}
 
-### Get Profile
-# @name GetProfile
+### Get GetProfileByID
+# @name GetProfileByID
 POST {{api-gateway-url}}/rpc
 content-type: {{jsonType}}
 Accept: {{jsonType}}
@@ -231,6 +232,21 @@ Accept: {{jsonType}}
     "service": "accountsrv",
     "method": "ProfileService.Get",
     "request": {
-       "id": "{{firstProfileId}}"
+       "profile_id": "{{firstProfileId}}"
+    }
+}
+
+
+### Get GetProfileByUserID
+# @name GetProfileByUserID
+POST {{api-gateway-url}}/rpc
+content-type: {{jsonType}}
+Accept: {{jsonType}}
+
+{
+    "service": "accountsrv",
+    "method": "ProfileService.Get",
+    "request": {
+       "user_id": "{{firstUserId}}"
     }
 }

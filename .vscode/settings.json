@@ -4,7 +4,7 @@
   // scm
   "scm.defaultViewMode": "tree",
   // Editor
-  "editor.autoIndent": true,
+  "editor.autoIndent": "full",
   "editor.codeActionsOnSave": {
     "source.organizeImports": true
   },
@@ -28,6 +28,8 @@
   "terminal.integrated.fontFamily": "MesloLGS NF, 'SourceCodePro+Powerline+Awesome Regular', Source Code Pro for Powerline, monospace, Meslo LG M for Powerline",
   // "terminal.integrated.fontSize": 16,
   // Workbench
+  "workbench.editor.limit.enabled": true,
+  "workbench.editor.limit.value": 8,
   "workbench.editor.highlightModifiedTabs": true,
   "workbench.colorCustomizations": {
     "activityBar.background": "#88d7ea",
@@ -57,21 +59,29 @@
       "when": "$(basename)"
     }
   },
+  "files.associations": {
+    "Makefile*": "makefile"
+  },
   // "files.hotExit": "onExit",
   "files.defaultLanguage": "go",
   "files.trimTrailingWhitespace": true,
   // Peacock Settings
   "peacock.color": "#5dc9e2",
   // GoLang
-  "go.testFlags": ["-v", "-count=1"],
+  "go.testFlags": [
+    "-v",
+    "-count=1"
+  ],
   "go.useLanguageServer": true,
   "go.lintTool": "golangci-lint",
-  "go.lintFlags": ["--fast"],
+  "go.lintFlags": [
+    "--fast"
+  ],
   // Proto
   "clang-format.style": "google",
   "protoc": {
     "options": [
-      "--proto_path=${workspaceRoot}/proto",
+      "--proto_path=${workspaceRoot}",
       "--proto_path=${env.GOPATH}/src"
     ]
   },

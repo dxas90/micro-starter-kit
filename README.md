@@ -29,14 +29,14 @@ Microservices starter kit for **Golang**, aims to be developer friendly.
 - [x] One Step _build/publish/deploy_ with [ko](https://github.com/google/ko)
 - [x] BuildInfo with [govvv](https://github.com/ahmetb/govvv)
 - [x] Linting with [GolangCI](https://github.com/golangci/golangci-lint) linters aggregator
-- [x] Linting Protos with [prototool](https://github.com/uber/prototool)
+- [x] Linting Protos with [Buf](https://buf.build/docs/introduction)
 - [x] CICD Pipelines with [GitHub Actions](https://github.com/features/actions)
 - [x] Kubernetes _Matrix Deployment_ with [Kustomize](https://kustomize.io/)
 - [ ] Add k8s [healthchecks](https://github.com/heptiolabs/healthcheck) with [cmux](https://medium.com/@drgarcia1986/listen-grpc-and-http-requests-on-the-same-port-263c40cb45ff)
 - [x] Feature Flags (enable/disable with zero cost)
 - [ ] Observability
 - [ ] Service Mesh with [Istio](https://istio.io/)
-- [ ] GraphQL Gateway with [gqlgen](https://gqlgen.com/), [rejoiner](https://github.com/google/rejoiner)
+- [ ] GraphQL Gateway with [gqlgen](https://gqlgen.com/), [rejoiner](https://github.com/google/rejoiner),[gqlgen](https://github.com/Shpota/skmz)
 - [ ] Graph-Based ORM [ent](https://entgo.io/)
 - [ ] Switch to [Bazel Build](https://bazel.build/)
 
@@ -86,15 +86,20 @@ docker system prune --volumes
 # dev mode
 make run-account
 # or
-make run-account ARGS="--server_address=localhost:55012 --broker_address=localhost:55022"
+make run-account ARGS="--server_address=localhost:55011 --broker_address=localhost:55021"
 # or
 go run srv/account/main.go srv/account/plugin.go \
 --configDir deploy/bases/account-srv/config \
 --server_address=localhost:55011 --broker_address=localhost:55021
 
+make run-greeter
+# or
+make run-emailer ARGS="--server_address=localhost:55012 --broker_address=localhost:55022"
+
 make run-emailer
 # or
-make run-emailer ARGS="--server_address=localhost:55011 --broker_address=localhost:55021"
+make run-emailer ARGS="--server_address=localhost:55013 --broker_address=localhost:55023"
+
 
 # integration tests for config module via CMD
 make run TARGET=demo TYPE=cmd
@@ -150,8 +155,8 @@ kubectl delete -f build/deploy.yaml
 5. [docker](docs/docker.md)
 6. [gitops](docs/gitops.md)
 7. [releasing](docs/releasing.md)
-8. [Style Guide](https://github.com/uber-go/guide/blob/master/style.md)
-9. [Uber Protobuf Style Guide V2](https://github.com/uber/prototool/blob/dev/style/README.md)
+8. [Protobuf Style Guide](https://buf.build/docs/style-guide)
+9. [Google Protobuf Style Guide](https://github.com/uber-go/guide/blob/master/style.md)
 
 ### External Docs
 

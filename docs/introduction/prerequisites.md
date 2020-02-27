@@ -9,6 +9,8 @@ You should have:
 ### third-party tools
 
 ```bash
+# github CLI
+brew install hub
 # for mac, use brew to install protobuf
 brew install protobuf
 # VS Code plugin `vscode-proto3` need clang-format
@@ -33,6 +35,9 @@ brew install etcd
 # CHANGELOG generator
 brew tap git-chglog/git-chglog
 brew install git-chglog
+# buf: proto tool https://buf.build/docs/tour-1
+brew tap bufbuild/buf
+brew install buf
 ```
 
 ### third-party golang tools
@@ -43,7 +48,8 @@ GO111MODULE=off go get github.com/ahmetb/govvv
 # for static check/linter
 GO111MODULE=off go get github.com/golangci/golangci-lint/cmd/golangci-lint
 # linter and tool for proto files
-GO111MODULE=on go get github.com/uber/prototool/cmd/prototool@dev
+# (if you use brew to install buf, skip next line)
+GO111MODULE=on go get github.com/bufbuild/buf/cmd/buf
 # kind - kubernetes in docker (optional)
 GO111MODULE=on go get sigs.k8s.io/kind
 # go lang  build/publish/deploy tool (optional)
@@ -55,9 +61,15 @@ go install github.com/markbates/pkger/cmd/pkger
 
 # fetch protoc plugins into $GOPATH
 GO111MODULE=off go get github.com/golang/protobuf/{proto,protoc-gen-go}
-GO111MODULE=off go get github.com/micro/protoc-gen-micro
+GO111MODULE=on go get github.com/micro/protoc-gen-micro/v2@v2.0.0
 # GO111MODULE=off go get -u github.com/envoyproxy/protoc-gen-validate
 # GO111MODULE=off go get -u github.com/infobloxopen/protoc-gen-gorm
+# getting official micro cli
+GO111MODULE=on go get github.com/micro/micro/v2
+# goup checks if there are any updates for imports in your module.
+# the main purpose is using it as a linter in continuous integration or in development process.
+# Usage: goup -v -m ./...
+GO111MODULE=on go get github.com/rvflash/goup
 ```
 
 > Installing PGV can currently only be done from source:
@@ -76,17 +88,3 @@ cd ~/go/src/github.com/infobloxopen/protoc-gen-gorm
 make install
 ```
 
-> Installing `micro-cli`<br/>
-> instead of using default micro-cli, pull custom build `micro-cli` with `gRPC` and `CORS` enabled
-
-```bash
-# getting official micro cli
-## GO111MODULE=on go get github.com/micro/micro
-# lets use custom made micro with gRPC enabled by default...
-# GO111MODULE=on go get github.com/xmlking/micro@master
-# Temp workaround...
-GO111MODULE=off go get -d github.com/xmlking/micro
-cd ~/go/src/github.com/xmlking/micro
-git pull --all
-go install ./...
-```
